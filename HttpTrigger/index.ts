@@ -1,5 +1,5 @@
 import { AzureFunction, Context, HttpRequest } from "@azure/functions";
-import { isArray, map } from "lodash";
+import { isArray, map, includes } from "lodash";
 import { Container } from "inversify";
 import getContainer from "../ioc/inversify.config";
 import { COMMON_TYPES } from "../ioc/commonTypes";
@@ -24,10 +24,10 @@ const httpTrigger: AzureFunction = async (
     const ids: string[] = req.query.id?.split(",");
     const type: string = req.query.type;
 
-    if (!isArray(ids) || !type) {
+    if (!isArray(ids) || includes(ids, '') || !type) {
       ctx.res = {
         status: 400,
-        body: { error: "Invalid query parameters" },
+        body: { error: "Invalid query parameters. You need to pass at least 1 ID and 1 type of Pokémon." },
       };
       return ctx.res;
     }
